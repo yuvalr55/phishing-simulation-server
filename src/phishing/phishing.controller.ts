@@ -6,14 +6,21 @@ import {
   Get,
   Query,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { PhishingService } from './phishing.service';
 import { PhishingDto } from '../dto/dto.schema';
 import { JwtAuthGuard } from '../jwt-auth.guard';
+import { Response } from 'express';
+import { AppLogger } from '../app.logger';
+import * as process from 'node:process';
 
 @Controller('phishing')
 export class PhishingController {
-  constructor(private readonly usersService: PhishingService) {}
+  constructor(
+    private readonly usersService: PhishingService,
+    private readonly logger: AppLogger,
+  ) {}
 
   @Post('send')
   @HttpCode(200)
@@ -24,11 +31,21 @@ export class PhishingController {
   }
 
   @Get('track')
-  @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
-  async trackPhishingClick(@Query('attackId') attackId: string) {
-    await this.usersService.updateAttackStatus(attackId);
-    return { message: 'Status updated' };
+  @HttpCode(302)
+  async trackPhishingClick(
+    @Query('attackId') attackId: string,
+    @Res() res: Response,
+  ) {
+    try {
+      await this.usersService.updateAttackStatus(attackId);
+    } catch (err) {
+      if (err instanceof Error) {
+        this.logger.error('Failed to update attack status', err.message);
+      } else {
+        this.logger.error('Failed to update attack status', String(err));
+      }
+    }
+    return res.redirect(process.env.REDIRECT || 'https://www.google.com');
   }
 
   @Get('table')

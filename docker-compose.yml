@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  simulation-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: simulation-server
+    restart: always
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      - SERVER_PORT=8001
+      - MONGO_URI=mongodb://root:root@mongodb:27017/register?authSource=admin
+    networks:
+      - shared-net
+
+networks:
+  shared-net:
+    external: true

@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PhishingController } from './phishing/phishing.controller';
 import { PhishingModule } from './phishing/phishing.module';
 import { UserModule } from './user/user.module';
+import { AppLogger } from './app.logger';
 
 /** Root module that bundles all application modules and configurations. */
 @Module({
@@ -16,6 +17,6 @@ import { UserModule } from './user/user.module';
     PhishingModule,
   ],
   controllers: [AppController, PhishingController],
-  providers: [AppService],
+  providers: [AppService, AppLogger],
 })
 export class AppModule {}

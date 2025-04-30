@@ -10,14 +10,14 @@ import {
   AttackStatus,
   default_sender_email,
 } from './phishing.content';
-import { Logger } from '@nestjs/common';
+import { AppLogger } from '../app.logger';
 
 @Injectable()
 /** Service handling phishing attack simulation and tracking. */
 export class PhishingService {
   /** Default email address used when no sender is specified. */
   private readonly defaultEmail = default_sender_email;
-  private readonly logger = new Logger(PhishingService.name);
+  private readonly logger = AppLogger;
 
   /** Initializes PhishingService with dependencies for mailing and database operations. */
   constructor(
